@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Моя сборка</title>
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <h1>Моя сборка</h1>
+
+    <p>CPU:
+    {% if cpu %}
+        <strong>{{ cpu.name }}</strong>
+        (<a class="list-action" href="{% url 'main:component_detail' 'cpu' cpu.id %}">подробнее</a>)
+        <a class="list-action" href="{% url 'main:remove_from_build' 'cpu' %}">Удалить</a>
+    {% else %}
+        не выбран
+    {% endif %}
+    </p>
+
+    <p>Motherboard:
+    {% if motherboard %}
+        <strong>{{ motherboard.name }}</strong>
+        (<a class="list-action" href="{% url 'main:component_detail' 'motherboard' motherboard.id %}">подробнее</a>)
+        <a class="list-action" href="{% url 'main:remove_from_build' 'motherboard' %}">Удалить</a>
+    {% else %}
+        не выбрана
+    {% endif %}
+    </p>
+
+    <p>Memory:
+    {% if memory %}
+        <strong>{{ memory.name }}</strong>
+        (<a class="list-action" href="{% url 'main:component_detail' 'memory' memory.id %}">подробнее</a>)
+        <a class="list-action" href="{% url 'main:remove_from_build' 'memory' %}">Удалить</a>
+    {% else %}
+        не выбрана
+    {% endif %}
+    </p>
+
+    <p>Case:
+    {% if case %}
+        <strong>{{ case.name }}</strong>
+        (<a class="list-action" href="{% url 'main:component_detail' 'case' case.id %}">подробнее</a>)
+        <a class="list-action" href="{% url 'main:remove_from_build' 'case' %}">Удалить</a>
+    {% else %}
+        не выбран
+    {% endif %}
+    </p>
+
+    <p>CPU Cooler:
+    {% if cpu_cooler %}
+        <strong>{{ cpu_cooler.name }}</strong>
+        (<a class="list-action" href="{% url 'main:component_detail' 'cpu_cooler' cpu_cooler.id %}">подробнее</a>)
+        <a class="list-action" href="{% url 'main:remove_from_build' 'cpu_cooler' %}">Удалить</a>
+    {% else %}
+        не выбран
+    {% endif %}
+    </p>
+
+    <p>HDD:
+    {% if hdd %}
+        <strong>{{ hdd.name }}</strong>
+        (<a class="list-action" href="{% url 'main:component_detail' 'hdd' hdd.id %}">подробнее</a>)
+        <a class="list-action" href="{% url 'main:remove_from_build' 'hdd' %}">Удалить</a>
+    {% else %}
+        не выбран
+    {% endif %}
+    </p>
+
+    <p>OS:
+    {% if os %}
+        <strong>{{ os.name }}</strong>
+        (<a class="list-action" href="{% url 'main:component_detail' 'os' os.id %}">подробнее</a>)
+        <a class="list-action" href="{% url 'main:remove_from_build' 'os' %}">Удалить</a>
+    {% else %}
+        не выбрана
+    {% endif %}
+    </p>
+
+    <p><a href="{% url 'main:index' %}">На главную</a></p>
+</div>
+</body>
+</html>

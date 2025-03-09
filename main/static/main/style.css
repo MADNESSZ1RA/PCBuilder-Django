@@ -1,0 +1,85 @@
+/* main/static/main/style.css */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #1c1c1c; /* Тёмный фон */
+    color: #ffffff;            /* Белый текст */
+    font-family: Arial, sans-serif;
+}
+
+a {
+    color: #70a4ff; /* Ссылки - светло-синий цвет */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Контейнер всего содержимого */
+.container {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #2b2b2b; /* Чуть светлее фон для контента */
+    border-radius: 8px;
+}
+
+/* Заголовки */
+h1, h2, h3 {
+    margin-top: 0;
+    color: #ffdf75; /* например, золотистый */
+}
+
+/* Списки */
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+/* Кнопки и формы */
+button, input[type="submit"] {
+    background-color: #70a4ff;
+    border: none;
+    color: #ffffff;
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover, input[type="submit"]:hover {
+    background-color: #4e82db; 
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 6px;
+    margin: 5px 0 10px 0;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #333;
+    color: #fff;
+}
+
+/* Ссылки-кнопки в списках */
+.list-action {
+    margin-left: 10px;
+    font-size: 0.9em;
+    background-color: #70a4ff;
+    color: #ffffff;
+    padding: 3px 6px;
+    border-radius: 3px;
+}
+
+.list-action:hover {
+    background-color: #4e82db;
+}

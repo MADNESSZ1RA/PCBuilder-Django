@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Подбор комплектующих</title>
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <h1>Главная страница</h1>
+    
+    <div>
+        <p>Режим совместимости:
+            {% if compatibility_on %}
+                <strong>Включен</strong>
+            {% else %}
+                <strong>Выключен</strong>
+            {% endif %}
+        </p>
+        <!-- Кнопка переключения -->
+        <form action="{% url 'main:toggle_compatibility' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">
+                {% if compatibility_on %}
+                    Отключить совместимость
+                {% else %}
+                    Включить совместимость
+                {% endif %}
+            </button>
+        </form>
+    </div>
+
+    <div>
+        <h2>Категории комплектующих</h2>
+        <ul>
+            <li><a href="{% url 'main:list_components' 'cpu' %}">Процессоры (CPU)</a></li>
+            <li><a href="{% url 'main:list_components' 'motherboard' %}">Материнские платы</a></li>
+            <li><a href="{% url 'main:list_components' 'memory' %}">Оперативная память</a></li>
+            <li><a href="{% url 'main:list_components' 'case' %}">Корпуса</a></li>
+            <li><a href="{% url 'main:list_components' 'cpu_cooler' %}">Кулеры (CPU)</a></li>
+            <li><a href="{% url 'main:list_components' 'hdd' %}">Жёсткие диски</a></li>
+            <li><a href="{% url 'main:list_components' 'os' %}">Операционные системы</a></li>
+        </ul>
+    </div>
+
+    <p><a href="{% url 'main:show_build' %}">Посмотреть текущую сборку</a></p>
+
+    <hr>
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'accounts:logout' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Выйти</button>
+        </form>
+    {% else %}
+        <a href="{% url 'accounts:login' %}">Войти</a> | 
+        <a href="{% url 'accounts:register' %}">Регистрация</a>
+    {% endif %}
+</div>
+</body>
+</html>

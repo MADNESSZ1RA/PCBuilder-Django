@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Характеристики {{ category|title }}</title>
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <h1>Детальный просмотр ({{ category|title }})</h1>
+
+    <!-- Пример просто выводим все поля объекта -->
+    <!-- В реальном проекте желательно отформатировать красиво -->
+    <p><strong>ID:</strong> {{ obj.id }}</p>
+    <p><strong>Название:</strong> {{ obj.name }}</p>
+    
+    {% if category == 'cpu' %}
+        <p><strong>Цена:</strong> {{ obj.price }}</p>
+        <p><strong>Ядер:</strong> {{ obj.core_count }}</p>
+        <p><strong>Частота (Core Clock):</strong> {{ obj.core_clock }}</p>
+        <p><strong>Буст (Boost Clock):</strong> {{ obj.boost_clock }}</p>
+        <p><strong>Socket:</strong> {{ obj.socket }}</p>
+        <p><strong>TDP:</strong> {{ obj.tdp }}</p>
+        <p><strong>SMT:</strong> {{ obj.smt }}</p>
+        <p><strong>Graphics:</strong> {{ obj.graphics }}</p>
+    {% elif category == 'motherboard' %}
+        <p><strong>Цена:</strong> {{ obj.price }}</p>
+        <p><strong>Socket:</strong> {{ obj.socket }}</p>
+        <p><strong>Форм-фактор:</strong> {{ obj.form_factor }}</p>
+        <p><strong>Макс. память (ГБ):</strong> {{ obj.max_memory }}</p>
+        <p><strong>Слотов памяти:</strong> {{ obj.memory_slots }}</p>
+        <p><strong>Цвет:</strong> {{ obj.color }}</p>
+    {% elif category == 'memory' %}
+        <p><strong>Цена:</strong> {{ obj.price }}</p>
+        <p><strong>Скорость:</strong> {{ obj.speed }}</p>
+        <p><strong>Модули:</strong> {{ obj.modules }}</p>
+        <p><strong>Цена за ГБ:</strong> {{ obj.price_per_gb }}</p>
+        <p><strong>Цвет:</strong> {{ obj.color }}</p>
+        <p><strong>First Word Latency:</strong> {{ obj.first_word_latency }}</p>
+        <p><strong>CAS Latency:</strong> {{ obj.cas_latency }}</p>
+    {% elif category == 'case' %}
+        <p><strong>Цена:</strong> {{ obj.price }}</p>
+        <p><strong>Тип:</strong> {{ obj.type }}</p>
+        <p><strong>Цвет:</strong> {{ obj.color }}</p>
+        <p><strong>PSU:</strong> {{ obj.psu }}</p>
+        <p><strong>Боковая панель:</strong> {{ obj.side_panel }}</p>
+        <p><strong>Внешние слоты:</strong> {{ obj.external_volume }}</p>
+        <p><strong>Внутренние слоты 3.5:</strong> {{ obj.internal_35_bays }}</p>
+    {% elif category == 'cpu_cooler' %}
+        <p><strong>Цена:</strong> {{ obj.price }}</p>
+        <p><strong>RPM:</strong> {{ obj.rpm }}</p>
+        <p><strong>Уровень шума:</strong> {{ obj.noise_level }}</p>
+        <p><strong>Цвет:</strong> {{ obj.color }}</p>
+        <p><strong>Размер:</strong> {{ obj.size }}</p>
+    {% elif category == 'hdd' %}
+        <p><strong>Цена:</strong> {{ obj.price }}</p>
+        <p><strong>Вместимость:</strong> {{ obj.capacity }}</p>
+        <p><strong>Цена за ГБ:</strong> {{ obj.price_per_gb }}</p>
+        <p><strong>Тип:</strong> {{ obj.type }}</p>
+        <p><strong>Кэш:</strong> {{ obj.cache }}</p>
+        <p><strong>Форм-фактор:</strong> {{ obj.form_factor }}</p>
+        <p><strong>Интерфейс:</strong> {{ obj.interface }}</p>
+    {% elif category == 'os' %}
+        <p><strong>Цена:</strong> {{ obj.price }}</p>
+        <p><strong>Режим:</strong> {{ obj.mode }}</p>
+        <p><strong>Макс. память (ГБ):</strong> {{ obj.max_memory }}</p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <p>
+            <a class="list-action" href="{% url 'main:add_to_build' category obj.id %}">
+                Добавить в сборку
+            </a>
+        </p>
+    {% else %}
+        <p>(Для добавления в сборку необходима авторизация)</p>
+    {% endif %}
+
+    <!-- Ссылка на DNS -->
+    <p>
+        <a class="list-action" href="{{ dns_link }}" target="_blank">
+            Посмотреть на DNS
+        </a>
+    </p>
+
+    <p><a href="{% url 'main:list_components' category %}">Назад к списку</a></p>
+</div>
+</body>
+</html>
