@@ -1,10 +1,8 @@
 # main/urls.py
 
 from django.urls import path
-from .views import (
-    index, toggle_compatibility, list_components,
-    add_to_build, show_build, component_detail, remove_from_build
-)
+from .views import index, toggle_compatibility, list_components, add_to_build, show_build, component_detail, \
+    remove_from_build
 
 app_name = 'main'
 
