@@ -7,21 +7,28 @@
     <link rel="stylesheet" href="{% static 'main/style.css' %}">
 </head>
 <body>
+
+<!-- Фиксированная кнопка "На главную" -->
+
 <div class="container">
+
     <h1>{{ category|title }}</h1>
     {% if compatibility_on %}
-        <p>Совместимость: включена </p>
+        <p>Совместимость: включена</p>
     {% else %}
         <p>Совместимость: выключена</p>
     {% endif %}
+    <a href="{% url 'main:index' %}" class="fixed-button">На главную</a>
 
     <ul>
         {% for item in items %}
             <li>
-                <strong>{{ item.name }}</strong> — {{ item.price|default:"n/a" }}
-                <br>
-                <!-- Ссылка на детальный просмотр -->
-                <a class="list-action" href="{% url 'main:component_detail' category item.id %}">
+                <strong>{{ item.name }}</strong> — {{ item.price|default:"n/a" }}<br>
+                
+                <!-- Открываем детальное описание в новой вкладке -->
+                <a class="list-action"
+                   href="{% url 'main:component_detail' category item.id %}"
+                   target="_blank">
                     Подробнее
                 </a>
 
@@ -35,8 +42,6 @@
             </li>
         {% endfor %}
     </ul>
-
-    <p><a href="{% url 'main:index' %}">На главную</a></p>
 </div>
 </body>
 </html>
