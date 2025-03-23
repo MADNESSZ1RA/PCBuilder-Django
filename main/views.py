@@ -8,7 +8,7 @@ from django.http import HttpResponseBadRequest
 from .models import Cpu, Motherboard, Memory, Case, CpuCooler, InternalHardDrive, Os
 
 # Импортируем все нужные функции из compatibility.py
-from .compatibility import filter_compatible_motherboards,filter_compatible_cases,filter_compatible_memory_for_build
+from .compatibility import filter_compatible_motherboards,filter_compatible_cases
 
 
 def index(request):
@@ -73,15 +73,6 @@ def list_components(request, category):
         elif category == 'case' and current_cpu:
             # Фильтруем корпуса по мощности PSU относительно TDP CPU
             items = filter_compatible_cases(current_cpu, items)
-
-        elif category == 'memory':
-            # Фильтруем модули ОЗУ по CPU, MB, OS (если выбраны)
-            items = filter_compatible_memory_for_build(items,
-                                                       cpu=current_cpu,
-                                                       motherboard=current_motherboard,
-                                                       os_=current_os)
-        # Для остальных категорий (cpu_cooler, hdd, os)
-        # пока не показано, но при желании можно расширять.
 
     context = {
         'category': category,
