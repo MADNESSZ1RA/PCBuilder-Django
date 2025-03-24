@@ -3,52 +3,34 @@
 import urllib.parse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 from django.http import HttpResponseBadRequest
 from .models import Cpu, Motherboard, Memory, Case, CpuCooler, InternalHardDrive, Os
-
-# Импортируем все нужные функции из compatibility.py
-from .compatibility import filter_compatible_motherboards,filter_compatible_cases
-
+from .compatibility import (
+    filter_compatible_motherboards,
+    filter_compatible_cases_by_motherboard  # <-- новая функция
+    # (можно также импортировать другие, если нужно)
+)
 
 def index(request):
-    """
-    Главная страница. Здесь же кнопка для переключения режима совместимости.
-    """
-    # Получаем состояние из сессии, по умолчанию пусть будет True (включено)
     compatibility_on = request.session.get('compatibility_on', True)
-
-    context = {
-        'compatibility_on': compatibility_on
-    }
-    return render(request, 'main/index.html', context)
-
+    return render(request, 'main/index.html', {'compatibility_on': compatibility_on})
 
 def toggle_compatibility(request):
-    """Переключает состояние совместимости в сессии."""
     current = request.session.get('compatibility_on', True)
     request.session['compatibility_on'] = not current
     return redirect('main:index')
 
-
 def list_components(request, category):
-    """
-    Выводит список комплектующих в зависимости от категории.
-    Учитывает режим совместимости (compatibility_on) для разных категорий.
-    """
     compatibility_on = request.session.get('compatibility_on', True)
 
-    # Получаем уже выбранные компоненты из сессии
     selected_cpu_id = request.session.get('build_cpu')
     selected_motherboard_id = request.session.get('build_motherboard')
     selected_os_id = request.session.get('build_os')
 
-    # Загружаем объекты (если есть)
     current_cpu = Cpu.objects.filter(id=selected_cpu_id).first() if selected_cpu_id else None
     current_motherboard = Motherboard.objects.filter(id=selected_motherboard_id).first() if selected_motherboard_id else None
     current_os = Os.objects.filter(id=selected_os_id).first() if selected_os_id else None
 
-    # Сопоставляем категорию с моделью
     model_map = {
         'cpu': Cpu,
         'motherboard': Motherboard,
@@ -65,14 +47,16 @@ def list_components(request, category):
     items = model_class.objects.all()
 
     if compatibility_on:
-        # Если включена проверка совместимости, применяем фильтры:
+        # CPU -> фильтр motherboards
         if category == 'motherboard' and current_cpu:
-            # Фильтруем матплаты по сокету CPU
             items = filter_compatible_motherboards(current_cpu, items)
 
-        elif category == 'case' and current_cpu:
-            # Фильтруем корпуса по мощности PSU относительно TDP CPU
-            items = filter_compatible_cases(current_cpu, items)
+        # CASE -> фильтр по форм-фактору материнки
+        elif category == 'case' and current_motherboard:
+            items = filter_compatible_cases_by_motherboard(current_motherboard, items)
+
+        # memory -> при желании можно тоже дополнять (пример см. в compatibility.py)
+        # os, cpu_cooler, hdd -> по желанию, если у вас есть логика
 
     context = {
         'category': category,
@@ -81,12 +65,8 @@ def list_components(request, category):
     }
     return render(request, 'main/category_list.html', context)
 
-
 @login_required
 def add_to_build(request, category, item_id):
-    """
-    Добавляет выбранную комплектующую в 'сборку' пользователя (сессия).
-    """
     build_map = {
         'cpu': 'build_cpu',
         'motherboard': 'build_motherboard',
@@ -111,21 +91,16 @@ def add_to_build(request, category, item_id):
     }
     model_class = model_map.get(category)
     try:
-        model_class.objects.get(id=item_id)  # если нет, бросит исключение
+        model_class.objects.get(id=item_id)
     except model_class.DoesNotExist:
         return HttpResponseBadRequest("Такого объекта не существует")
 
     request.session[key] = item_id
     request.session.modified = True
-
     return redirect('main:show_build')
-
 
 @login_required
 def show_build(request):
-    """
-    Отображает текущую сборку пользователя (по данным в сессии).
-    """
     build_cpu_id = request.session.get('build_cpu')
     build_motherboard_id = request.session.get('build_motherboard')
     build_memory_id = request.session.get('build_memory')
@@ -153,11 +128,7 @@ def show_build(request):
     }
     return render(request, 'main/build.html', context)
 
-
 def remove_from_build(request, category):
-    """
-    Удаляет выбранную категорию комплектующего из сборки (сессии).
-    """
     build_map = {
         'cpu': 'build_cpu',
         'motherboard': 'build_motherboard',
@@ -174,14 +145,9 @@ def remove_from_build(request, category):
     if key in request.session:
         del request.session[key]
         request.session.modified = True
-
     return redirect('main:show_build')
 
-
 def component_detail(request, category, item_id):
-    """
-    Детальный просмотр характеристик выбранного комплектующего + ссылка на DNS.
-    """
     model_map = {
         'cpu': Cpu,
         'motherboard': Motherboard,
@@ -199,7 +165,6 @@ def component_detail(request, category, item_id):
     if not obj:
         return HttpResponseBadRequest("Объект не найден")
 
-    # Генерация ссылки на DNS
     base_url = "https://www.dns-shop.ru/search/"
     product_name = obj.name.strip() if obj.name else ""
     search_query = urllib.parse.quote(product_name)

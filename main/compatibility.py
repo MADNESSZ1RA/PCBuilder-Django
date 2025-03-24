@@ -22,17 +22,74 @@ def filter_compatible_motherboards(cpu, all_motherboards):
     return compatible
 
 
+# --- НОВАЯ ЛОГИКА ДЛЯ КОРПУСА (CASE) ПО ФОРМ-ФАКТОРУ --- #
+
+def parse_form_factor(text):
+    """
+    Пробуем определить «ранг» форм-фактора из строки.
+    Например, "Mini ITX", "Micro ATX", "ATX", "Extended ATX" и т.д.
+
+    Возвращаем целое число (1,2,3,4 и т.п.), где больше = больше форм-фактор.
+    Если распознать не удалось — возвращаем None.
+    """
+    if not text:
+        return None
+
+    text = text.lower()
+
+    # В этом словаре указываем известные форм-факторы и их «ранги»
+    ranks = {
+        "mini itx": 1,
+        "micro atx": 2,
+        "atx": 3,
+        "extended atx": 4,
+    }
+
+    # Проверяем, упоминается ли какой-то из ключей в строке
+    for ff, rank in ranks.items():
+        if ff in text:
+            return rank
+
+    return None
+
+
+def is_case_compatible_with_motherboard(motherboard, case):
+    """
+    Сравниваем form_factor материнки и type корпуса.
+    Если ранг корпуса >= ранга материнки, то совместимы.
+    """
+    mb_rank = parse_form_factor(motherboard.form_factor or "")
+    case_rank = parse_form_factor(case.type or "")
+
+    # Если не можем распарсить — считаем несовместимым
+    if mb_rank is None or case_rank is None:
+        return False
+
+    return case_rank >= mb_rank
+
+
+def filter_compatible_cases_by_motherboard(motherboard, all_cases):
+    """
+    Отфильтровать корпуса, у которых form_factor (rank) >= form_factor материнки.
+    """
+    result = []
+    for c in all_cases:
+        if is_case_compatible_with_motherboard(motherboard, c):
+            result.append(c)
+    return result
+
+
+# --- Ниже всё, что касается памяти, ОС и т.д. --- #
+
 def parse_psu_wattage(psu_text):
     """
-    Пытаемся извлечь из строки блока питания (case.psu) число ватт.
-    Пример: "500W" или "500 W" -> 500
-    Если не удаётся, возвращаем None.
+    (Эта функция вам может больше не понадобиться, 
+     если вы убираете проверки мощности БП, 
+     но оставим на всякий случай)
     """
     if not psu_text:
         return None
-
     text = psu_text.strip().upper()
-    # Ищем шаблон вида "<число>W" или "<число> W"
     match = re.search(r'(\d+)\s?W', text)
     if match:
         try:
@@ -40,18 +97,6 @@ def parse_psu_wattage(psu_text):
         except ValueError:
             return None
     return None
-
-
-def is_psu_sufficient_for_cpu(cpu, case):
-    """
-    Проверяем, хватает ли мощности БП (case.psu) для CPU.tdp.
-    Упрощённая логика: если psu >= cpu.tdp * 1.3, то считаем достаточно.
-    """
-    wattage = parse_psu_wattage(case.psu)
-    if wattage is None:
-        # Если не смогли распарсить PSU, считаем несовместимым
-        return False
-    return wattage >= cpu.tdp * 1.3
 
 
 def parse_memory_capacity(memory):
@@ -91,34 +136,21 @@ def parse_memory_capacity(memory):
 
 
 def is_memory_compatible_with_os(memory, os_):
-    """
-    Проверяем, вписывается ли объём памяти в max_memory ОС.
-    os_.max_memory — целое число (или None).
-    memory.modules — строка, парсим её.
-    """
     if os_ is None:
-        # Если ОС не выбрана, не проверяем
         return True
-
     if os_.max_memory is None:
-        # Если в БД нет ограничения, считаем совместимым
         return True
 
     mem_capacity = parse_memory_capacity(memory)
     if mem_capacity is None:
-        # Не удалось определить объём, считаем несовместимым
         return False
 
     return mem_capacity <= os_.max_memory
 
 
 def is_memory_compatible_with_motherboard(memory, motherboard):
-    """
-    Проверяем, вписывается ли объём памяти в max_memory матер. платы.
-    """
     if motherboard is None:
         return True
-
     if motherboard.max_memory is None:
         return True
 
@@ -130,28 +162,12 @@ def is_memory_compatible_with_motherboard(memory, motherboard):
 
 
 def is_memory_compatible_with_cpu(memory, cpu):
-    """
-    Проверка максимальной оперативной памяти, которую «может обработать» CPU.
-    У CPU нет поля max_memory, так что сделаем заглушку (128 ГБ).
-    """
-    # Например, считаем, что любой CPU поддерживает до 128 ГБ
+    # Заглушка — считаем, что любой CPU поддерживает до 128 ГБ
     assumed_cpu_max = 128
     mem_capacity = parse_memory_capacity(memory)
     if mem_capacity is None:
         return False
-
     return mem_capacity <= assumed_cpu_max
-
-
-def filter_compatible_cases(cpu, all_cases):
-    """
-    Отфильтровать корпуса, у которых psu хватает для CPU.
-    """
-    result = []
-    for case in all_cases:
-        if is_psu_sufficient_for_cpu(cpu, case):
-            result.append(case)
-    return result
 
 
 def filter_compatible_memory_for_build(all_memory, cpu=None, motherboard=None, os_=None):
@@ -163,13 +179,10 @@ def filter_compatible_memory_for_build(all_memory, cpu=None, motherboard=None, o
     """
     result = []
     for mem in all_memory:
-        # CPU совместимость
         if cpu and not is_memory_compatible_with_cpu(mem, cpu):
             continue
-        # Motherboard совместимость
         if motherboard and not is_memory_compatible_with_motherboard(mem, motherboard):
             continue
-        # OS совместимость
         if os_ and not is_memory_compatible_with_os(mem, os_):
             continue
         result.append(mem)
