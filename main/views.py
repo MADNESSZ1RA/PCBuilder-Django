@@ -47,16 +47,11 @@ def list_components(request, category):
     items = model_class.objects.all()
 
     if compatibility_on:
-        # CPU -> фильтр motherboards
         if category == 'motherboard' and current_cpu:
             items = filter_compatible_motherboards(current_cpu, items)
 
-        # CASE -> фильтр по форм-фактору материнки
         elif category == 'case' and current_motherboard:
             items = filter_compatible_cases_by_motherboard(current_motherboard, items)
-
-        # memory -> при желании можно тоже дополнять (пример см. в compatibility.py)
-        # os, cpu_cooler, hdd -> по желанию, если у вас есть логика
 
     context = {
         'category': category,
@@ -165,14 +160,16 @@ def component_detail(request, category, item_id):
     if not obj:
         return HttpResponseBadRequest("Объект не найден")
 
-    base_url = "https://www.dns-shop.ru/search/"
+    base_dns_url = "https://www.dns-shop.ru/search/"
+    base_yandex_url = "https://market.yandex.ru/search?text="
     product_name = obj.name.strip() if obj.name else ""
     search_query = urllib.parse.quote(product_name)
-    dns_link = f"{base_url}?q={search_query}"
-
+    dns_link = f"{base_dns_url}?q={search_query}"
+    yandex_link = f"{base_yandex_url}{search_query}"
     context = {
         'obj': obj,
         'category': category,
         'dns_link': dns_link,
+        'yandex_link': yandex_link,
     }
     return render(request, 'main/detail.html', context)
