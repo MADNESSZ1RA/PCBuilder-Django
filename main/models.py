@@ -1,11 +1,8 @@
-# main/models.py
-
 from django.db import models
 
 class VideoCard(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)
-    price = models.TextField(blank=True, null=True)
     chipset = models.TextField(blank=True, null=True)
     memory = models.TextField(blank=True, null=True)
     core_clock = models.TextField(blank=True, null=True)
@@ -20,7 +17,6 @@ class VideoCard(models.Model):
 class Case(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)
-    price = models.TextField(blank=True, null=True)
     type = models.TextField(blank=True, null=True)
     color = models.TextField(blank=True, null=True)
     psu = models.TextField(blank=True, null=True)
@@ -36,7 +32,6 @@ class Case(models.Model):
 class Cpu(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)
-    price = models.TextField(blank=True, null=True)
     core_count = models.IntegerField(blank=True, null=True)
     core_clock = models.TextField(blank=True, null=True)
     boost_clock = models.TextField(blank=True, null=True)
@@ -53,7 +48,6 @@ class Cpu(models.Model):
 class CpuCooler(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)
-    price = models.TextField(blank=True, null=True)
     rpm = models.TextField(blank=True, null=True)
     noise_level = models.TextField(blank=True, null=True)
     color = models.TextField(blank=True, null=True)
@@ -67,7 +61,6 @@ class CpuCooler(models.Model):
 class InternalHardDrive(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)
-    price = models.TextField(blank=True, null=True)
     capacity = models.TextField(blank=True, null=True)
     price_per_gb = models.TextField(blank=True, null=True)
     type = models.TextField(blank=True, null=True)
@@ -83,7 +76,6 @@ class InternalHardDrive(models.Model):
 class Memory(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)
-    price = models.TextField(blank=True, null=True)
     speed = models.TextField(blank=True, null=True)
     modules = models.TextField(blank=True, null=True)
     price_per_gb = models.TextField(blank=True, null=True)
@@ -99,7 +91,6 @@ class Memory(models.Model):
 class Motherboard(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)
-    price = models.TextField(blank=True, null=True)
     socket = models.TextField(blank=True, null=True)
     form_factor = models.TextField(blank=True, null=True)
     max_memory = models.IntegerField(blank=True, null=True)
@@ -114,7 +105,6 @@ class Motherboard(models.Model):
 class Os(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)
-    price = models.TextField(blank=True, null=True)
     mode = models.TextField(blank=True, null=True)
     max_memory = models.IntegerField(blank=True, null=True)
 

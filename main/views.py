@@ -6,8 +6,7 @@ from django.http import HttpResponseBadRequest, HttpResponse
 from .models import Cpu, Motherboard, Memory, Case, CpuCooler, InternalHardDrive, Os, VideoCard
 from .compatibility import (
     filter_compatible_motherboards,
-    filter_compatible_cases_by_motherboard  # <-- новая функция
-    # (можно также импортировать другие, если нужно)
+    filter_compatible_cases_by_motherboard
 )
 
 def index(request):
@@ -229,7 +228,7 @@ def import_build(request):
             return HttpResponseBadRequest("Неверное расширение файла. Требуется .pcbuild")
 
         try:
-            file_data = build_file.read().decode('utf-8')  # предполагаем UTF-8
+            file_data = build_file.read().decode('utf-8')
             data = json.loads(file_data)
         except Exception as e:
             return HttpResponseBadRequest(f"Ошибка чтения/парсинга файла: {e}")

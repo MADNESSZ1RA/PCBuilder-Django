@@ -1,5 +1,3 @@
-# pc_builder/settings.py
-
 import os
 from pathlib import Path
 
@@ -11,7 +9,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
-    # Стандартные Django-приложения
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -19,7 +16,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Наши приложения
     'accounts',
     'main',
 ]
@@ -39,8 +35,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            # Вы можете добавить сюда путь к шаблонам, если нужно
-            # Например: BASE_DIR / 'templates'
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -59,9 +53,9 @@ WSGI_APPLICATION = 'pc_builder.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pc_builder',       # Имя БД
-        'USER': 'postgres',         # ваш пользователь
-        'PASSWORD': '12345',        # ваш пароль
+        'NAME': 'pc_builder',      
+        'USER': 'postgres',        
+        'PASSWORD': '12345',        
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -71,7 +65,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
-    # При необходимости подключайте остальные валидаторы
 ]
 
 LANGUAGE_CODE = 'ru-ru'
@@ -82,7 +75,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'main', 'static'),  # Пример
+    os.path.join(BASE_DIR, 'main', 'static'), 
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
