@@ -2,6 +2,21 @@
 
 from django.db import models
 
+class VideoCard(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.TextField(blank=True, null=True)
+    price = models.TextField(blank=True, null=True)
+    chipset = models.TextField(blank=True, null=True)
+    memory = models.TextField(blank=True, null=True)
+    core_clock = models.TextField(blank=True, null=True)
+    boost_clock = models.TextField(blank=True, null=True)
+    color = models.TextField(blank=True, null=True)
+    length = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'video_card'
+
 class Case(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)

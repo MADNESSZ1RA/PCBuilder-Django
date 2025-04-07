@@ -65,6 +65,7 @@ li {
 
 /* Кнопки и формы */
 button,
+input[type="file"],
 input[type="submit"] {
   background-color: #70a4ff;
   border: none;

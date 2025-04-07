@@ -55,6 +55,13 @@
         <p><strong>Кэш:</strong> {{ obj.cache }}</p>
         <p><strong>Форм-фактор:</strong> {{ obj.form_factor }}</p>
         <p><strong>Интерфейс:</strong> {{ obj.interface }}</p>
+    {% elif category == 'video_card' %}
+    <p><strong>Чипсет:</strong> {{ obj.chipset }}</p>
+    <p><strong>Память:</strong> {{ obj.memory }}</p>
+    <p><strong>Количество ядер:</strong> {{ obj.core_clock }}</p>
+    <p><strong>Частота:</strong> {{ obj.boost_clock }}</p>
+    <p><strong>Цвет:</strong> {{ obj.color }}</p>
+    <p><strong>Длина:</strong> {{ obj.length }}</p>
     {% elif category == 'os' %}
         <p><strong>Режим:</strong> {{ obj.mode }}</p>
         <p><strong>Макс. память (ГБ):</strong> {{ obj.max_memory }}</p>

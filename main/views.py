@@ -1,10 +1,9 @@
-# main/views.py
-
+import json
 import urllib.parse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseBadRequest
-from .models import Cpu, Motherboard, Memory, Case, CpuCooler, InternalHardDrive, Os
+from django.http import HttpResponseBadRequest, HttpResponse
+from .models import Cpu, Motherboard, Memory, Case, CpuCooler, InternalHardDrive, Os, VideoCard
 from .compatibility import (
     filter_compatible_motherboards,
     filter_compatible_cases_by_motherboard  # <-- новая функция
@@ -39,6 +38,7 @@ def list_components(request, category):
         'cpu_cooler': CpuCooler,
         'hdd': InternalHardDrive,
         'os': Os,
+        'video_card': VideoCard,
     }
     model_class = model_map.get(category)
     if not model_class:
@@ -70,6 +70,7 @@ def add_to_build(request, category, item_id):
         'cpu_cooler': 'build_cpu_cooler',
         'hdd': 'build_hdd',
         'os': 'build_os',
+        'video_card': 'build_video_card',
     }
     key = build_map.get(category)
     if not key:
@@ -83,6 +84,7 @@ def add_to_build(request, category, item_id):
         'cpu_cooler': CpuCooler,
         'hdd': InternalHardDrive,
         'os': Os,
+        'video_card': VideoCard,
     }
     model_class = model_map.get(category)
     try:
@@ -103,6 +105,7 @@ def show_build(request):
     build_cpu_cooler_id = request.session.get('build_cpu_cooler')
     build_hdd_id = request.session.get('build_hdd')
     build_os_id = request.session.get('build_os')
+    build_video_card_id = request.session.get('build_video_card')
 
     selected_cpu = Cpu.objects.filter(id=build_cpu_id).first() if build_cpu_id else None
     selected_motherboard = Motherboard.objects.filter(id=build_motherboard_id).first() if build_motherboard_id else None
@@ -111,6 +114,7 @@ def show_build(request):
     selected_cpu_cooler = CpuCooler.objects.filter(id=build_cpu_cooler_id).first() if build_cpu_cooler_id else None
     selected_hdd = InternalHardDrive.objects.filter(id=build_hdd_id).first() if build_hdd_id else None
     selected_os = Os.objects.filter(id=build_os_id).first() if build_os_id else None
+    selected_video_card = VideoCard.objects.filter(id=build_video_card_id).first() if build_video_card_id else None
 
     context = {
         'cpu': selected_cpu,
@@ -120,6 +124,7 @@ def show_build(request):
         'cpu_cooler': selected_cpu_cooler,
         'hdd': selected_hdd,
         'os': selected_os,
+        'video_card': selected_video_card,
     }
     return render(request, 'main/build.html', context)
 
@@ -132,6 +137,7 @@ def remove_from_build(request, category):
         'cpu_cooler': 'build_cpu_cooler',
         'hdd': 'build_hdd',
         'os': 'build_os',
+        'video_card': 'build_video_card',
     }
     key = build_map.get(category)
     if not key:
@@ -151,6 +157,7 @@ def component_detail(request, category, item_id):
         'cpu_cooler': CpuCooler,
         'hdd': InternalHardDrive,
         'os': Os,
+        'video_card': VideoCard,
     }
     model_class = model_map.get(category)
     if not model_class:
@@ -173,3 +180,81 @@ def component_detail(request, category, item_id):
         'yandex_link': yandex_link,
     }
     return render(request, 'main/detail.html', context)
+
+BUILD_MAP = {
+    'build_cpu':       (Cpu,         'cpu'),
+    'build_motherboard': (Motherboard, 'motherboard'),
+    'build_memory':    (Memory,      'memory'),
+    'build_case':      (Case,        'case'),
+    'build_cpu_cooler': (CpuCooler,   'cpu_cooler'),
+    'build_hdd':       (InternalHardDrive, 'hdd'),
+    'build_os':        (Os,          'os'),
+    'build_video_card': (VideoCard,   'video_card'),
+}
+
+@login_required
+def export_build(request):
+    build_data = {}
+
+    for session_key, (ModelClass, cat_name) in BUILD_MAP.items():
+        item_id = request.session.get(session_key)
+        if item_id:
+            obj = ModelClass.objects.filter(id=item_id).first()
+            if obj:
+                build_data[cat_name] = {
+                    'id': obj.id,
+                    'name': obj.name,
+                    'price': obj.price,
+                }
+            else:
+                pass
+        else:
+            pass
+
+    json_data = json.dumps(build_data, ensure_ascii=False, indent=2)
+
+    response = HttpResponse(json_data, content_type='application/octet-stream')
+    response['Content-Disposition'] = 'attachment; filename="my_build.pcbuild"'
+    return response
+
+
+@login_required
+def import_build(request):
+    if request.method == 'POST':
+        build_file = request.FILES.get('build_file')
+        if not build_file:
+            return HttpResponseBadRequest("Файл не загружен.")
+
+        if not build_file.name.endswith('.pcbuild'):
+            return HttpResponseBadRequest("Неверное расширение файла. Требуется .pcbuild")
+
+        try:
+            file_data = build_file.read().decode('utf-8')  # предполагаем UTF-8
+            data = json.loads(file_data)
+        except Exception as e:
+            return HttpResponseBadRequest(f"Ошибка чтения/парсинга файла: {e}")
+
+        for cat_name, obj_info in data.items():
+            session_key_to_set = None
+            model_class = None
+
+            for session_key, (ModelClass, map_cat) in BUILD_MAP.items():
+                if map_cat == cat_name:
+                    session_key_to_set = session_key
+                    model_class = ModelClass
+                    break
+
+            if session_key_to_set and model_class:
+                item_id = obj_info.get('id')
+                if item_id:
+                    exists = model_class.objects.filter(id=item_id).exists()
+                    if exists:
+                        request.session[session_key_to_set] = item_id
+                    else:
+                        pass
+
+        request.session.modified = True
+        return redirect('main:show_build')
+
+    else:
+        return redirect('main:show_build')

@@ -75,7 +75,16 @@
         <a class="list-action" href="{% url 'main:list_components' 'hdd' %}">Выбрать</a>
     {% endif %}
     </p>
-
+    <p>Video Card:
+        {% if video_card %}
+            <strong>{{ video_card.name }}</strong>
+            (<a class="list-action" href="{% url 'main:component_detail' 'video_card' video_card.id %}">подробнее</a>)
+            <a class="list-action" href="{% url 'main:remove_from_build' 'video_card' %}">Удалить</a>
+        {% else %}
+            <a class="list-action" href="{% url 'main:list_components' 'video_card' %}">Выбрать</a>
+        {% endif %}
+        </p>
+        
     <p>OS:
     {% if os %}
         <strong>{{ os.name }}</strong>
@@ -87,7 +96,19 @@
     {% endif %}
     </p>
 
-    <p><a href="{% url 'main:index' %}">На главную</a></p>
+    <!-- Кнопка Экспорт (GET-запрос) -->
+    <form method="get" action="{% url 'main:export_build' %}">
+        <button type="submit">Экспорт</button>
+    </form>
+
+    <!-- Форма Импорта (POST, файл .pcbuild) -->
+    <form method="post" action="{% url 'main:import_build' %}" enctype="multipart/form-data" style="margin-top: 10px;">
+        {% csrf_token %}
+        <input type="file" name="build_file" accept=".pcbuild" required>
+        <button type="submit">Импорт</button>
+    </form>
+
+    <p style="margin-top: 20px;"><a href="{% url 'main:index' %}">На главную</a></p>
 </div>
 </body>
 </html>
