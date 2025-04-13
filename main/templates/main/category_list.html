@@ -8,24 +8,23 @@
 </head>
 <body>
 
-<!-- Фиксированная кнопка "На главную" -->
-
 <div class="container">
-
     <h1>{{ category|title }}</h1>
     {% if compatibility_on %}
         <p>Совместимость: включена</p>
     {% else %}
         <p>Совместимость: выключена</p>
     {% endif %}
+
     <a href="{% url 'main:index' %}" class="fixed-button">На главную</a>
 
-    <ul>
+    <input type="text" id="search-input" placeholder="Поиск..." style="width: 200px; margin-bottom: 10px;">
+    
+    <ul id="items-list">
         {% for item in items %}
             <li>
                 <strong>{{ item.name }}</strong><br>
                 
-                <!-- Открываем детальное описание в новой вкладке -->
                 <a class="list-action"
                    href="{% url 'main:component_detail' category item.id %}"
                    target="_blank">
@@ -37,11 +36,71 @@
                         Добавить в сборку
                     </a>
                 {% else %}
-                    <span>(Требуется вход)</span>
+                    <span>(Требуется вход для добавления в сборку)</span>
                 {% endif %}
             </li>
         {% endfor %}
     </ul>
 </div>
+
+<script>
+const input = document.getElementById("search-input");
+const itemsList = document.getElementById("items-list");
+
+function renderItems(items, category, userIsAuthenticated) {
+  itemsList.innerHTML = "";
+
+  items.forEach(obj => {
+    const li = document.createElement("li");
+
+    const strongEl = document.createElement("strong");
+    strongEl.textContent = obj.name;
+    li.appendChild(strongEl);
+    li.appendChild(document.createElement("br"));
+
+    const detailLink = document.createElement("a");
+    detailLink.classList.add("list-action");
+    detailLink.href = obj.detail_url; 
+    detailLink.target = "_blank";
+    detailLink.textContent = "Подробнее";
+    li.appendChild(detailLink);
+
+    if (userIsAuthenticated === "True") {
+      const addLink = document.createElement("a");
+      addLink.classList.add("list-action");
+      addLink.href = obj.add_url;
+      addLink.textContent = "Добавить в сборку";
+      li.appendChild(document.createTextNode(" "));
+      li.appendChild(addLink);
+    } else {
+      const spanMsg = document.createElement("span");
+      spanMsg.textContent = " (Требуется вход для добавления в сборку)";
+      li.appendChild(spanMsg);
+    }
+
+    itemsList.appendChild(li);
+  });
+}
+
+input.addEventListener("input", function() {
+  const query = this.value;
+  const category = "{{ category }}";
+  const userIsAuthenticated = "{{ user.is_authenticated }}";
+
+  fetch(`{% url 'main:ajax_search' category %}?q=${encodeURIComponent(query)}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error(data.error);
+        return;
+      }
+      renderItems(data.items, category, userIsAuthenticated);
+    })
+    .catch(err => {
+      console.error("AJAX error:", err);
+    });
+});
+</script>
+
 </body>
 </html>
