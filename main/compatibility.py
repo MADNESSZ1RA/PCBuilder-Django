@@ -1,5 +1,6 @@
 import re
 
+
 def is_compatible_cpu_motherboard(cpu, motherboard):
     return cpu.socket == motherboard.socket
 
@@ -12,13 +13,10 @@ def filter_compatible_motherboards(cpu, all_motherboards):
     return compatible
 
 
-
 def parse_form_factor(text):
     if not text:
         return None
-
     text = text.lower()
-
     ranks = {
         "mini itx": 1,
         "micro atx": 2,
@@ -52,7 +50,6 @@ def filter_compatible_cases_by_motherboard(motherboard, all_cases):
 
 
 def parse_psu_wattage(psu_text):
-
     if not psu_text:
         return None
     text = psu_text.strip().upper()
