@@ -16,7 +16,6 @@
         (<a class="list-action" href="{% url 'main:component_detail' 'cpu' cpu.id %}">подробнее</a>)
         <a class="list-action" href="{% url 'main:remove_from_build' 'cpu' %}">Удалить</a>
     {% else %}
-        <!-- Ссылка на страницу выбора CPU -->
         <a class="list-action" href="{% url 'main:list_components' 'cpu' %}">Выбрать</a>
     {% endif %}
     </p>
@@ -27,7 +26,6 @@
         (<a class="list-action" href="{% url 'main:component_detail' 'motherboard' motherboard.id %}">подробнее</a>)
         <a class="list-action" href="{% url 'main:remove_from_build' 'motherboard' %}">Удалить</a>
     {% else %}
-        <!-- Ссылка на страницу выбора Материнской платы -->
         <a class="list-action" href="{% url 'main:list_components' 'motherboard' %}">Выбрать</a>
     {% endif %}
     </p>
@@ -38,7 +36,6 @@
         (<a class="list-action" href="{% url 'main:component_detail' 'memory' memory.id %}">подробнее</a>)
         <a class="list-action" href="{% url 'main:remove_from_build' 'memory' %}">Удалить</a>
     {% else %}
-        <!-- Ссылка на страницу выбора ОЗУ -->
         <a class="list-action" href="{% url 'main:list_components' 'memory' %}">Выбрать</a>
     {% endif %}
     </p>
@@ -49,7 +46,6 @@
         (<a class="list-action" href="{% url 'main:component_detail' 'case' case.id %}">подробнее</a>)
         <a class="list-action" href="{% url 'main:remove_from_build' 'case' %}">Удалить</a>
     {% else %}
-        <!-- Ссылка на страницу выбора Корпуса -->
         <a class="list-action" href="{% url 'main:list_components' 'case' %}">Выбрать</a>
     {% endif %}
     </p>
@@ -60,7 +56,6 @@
         (<a class="list-action" href="{% url 'main:component_detail' 'cpu_cooler' cpu_cooler.id %}">подробнее</a>)
         <a class="list-action" href="{% url 'main:remove_from_build' 'cpu_cooler' %}">Удалить</a>
     {% else %}
-        <!-- Ссылка на страницу выбора кулера -->
         <a class="list-action" href="{% url 'main:list_components' 'cpu_cooler' %}">Выбрать</a>
     {% endif %}
     </p>
@@ -71,7 +66,6 @@
         (<a class="list-action" href="{% url 'main:component_detail' 'hdd' hdd.id %}">подробнее</a>)
         <a class="list-action" href="{% url 'main:remove_from_build' 'hdd' %}">Удалить</a>
     {% else %}
-        <!-- Ссылка на страницу выбора HDD -->
         <a class="list-action" href="{% url 'main:list_components' 'hdd' %}">Выбрать</a>
     {% endif %}
     </p>
@@ -91,23 +85,26 @@
         (<a class="list-action" href="{% url 'main:component_detail' 'os' os.id %}">подробнее</a>)
         <a class="list-action" href="{% url 'main:remove_from_build' 'os' %}">Удалить</a>
     {% else %}
-        <!-- Ссылка на страницу выбора ОС -->
         <a class="list-action" href="{% url 'main:list_components' 'os' %}">Выбрать</a>
     {% endif %}
     </p>
 
-    <!-- Кнопка Экспорт (GET-запрос) -->
     <form method="get" action="{% url 'main:export_build' %}">
         <button type="submit">Экспорт</button>
     </form>
 
-    <!-- Форма Импорта (POST, файл .pcbuild) -->
     <form method="post" action="{% url 'main:import_build' %}" enctype="multipart/form-data" style="margin-top: 10px;">
         {% csrf_token %}
         <input type="file" name="build_file" accept=".pcbuild" required>
         <button type="submit">Импорт</button>
     </form>
 
+    <form method="post" action="{% url 'main:save_build_to_db' %}">
+        {% csrf_token %}
+        <button type="submit">Сохранить сборку</button>
+    </form>
+    
+    
     <p style="margin-top: 20px;"><a href="{% url 'main:index' %}">На главную</a></p>
 </div>
 </body>

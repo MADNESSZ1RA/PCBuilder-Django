@@ -1,6 +1,6 @@
 import json
 import urllib.parse
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 from .models import (
@@ -17,6 +17,7 @@ from .compatibility import (
     filter_compatible_motherboards,
     filter_compatible_cases_by_motherboard,
 )
+from accounts.models import SavedBuild
 
 
 def index(request):
@@ -37,17 +38,9 @@ def list_components(request, category):
     selected_motherboard_id = request.session.get("build_motherboard")
     selected_os_id = request.session.get("build_os")
 
-    current_cpu = (
-        Cpu.objects.filter(id=selected_cpu_id).first() if selected_cpu_id else None
-    )
-    current_motherboard = (
-        Motherboard.objects.filter(id=selected_motherboard_id).first()
-        if selected_motherboard_id
-        else None
-    )
-    current_os = (
-        Os.objects.filter(id=selected_os_id).first() if selected_os_id else None
-    )
+    current_cpu = Cpu.objects.filter(id=selected_cpu_id).first() if selected_cpu_id else None
+    current_motherboard = Motherboard.objects.filter(id=selected_motherboard_id).first() if selected_motherboard_id else None
+    current_os = Os.objects.filter(id=selected_os_id).first() if selected_os_id else None
 
     model_map = {
         "cpu": Cpu,
@@ -68,7 +61,6 @@ def list_components(request, category):
     if compatibility_on:
         if category == "motherboard" and current_cpu:
             items = filter_compatible_motherboards(current_cpu, items)
-
         elif category == "case" and current_motherboard:
             items = filter_compatible_cases_by_motherboard(current_motherboard, items)
 
@@ -129,33 +121,13 @@ def show_build(request):
     build_video_card_id = request.session.get("build_video_card")
 
     selected_cpu = Cpu.objects.filter(id=build_cpu_id).first() if build_cpu_id else None
-    selected_motherboard = (
-        Motherboard.objects.filter(id=build_motherboard_id).first()
-        if build_motherboard_id
-        else None
-    )
-    selected_memory = (
-        Memory.objects.filter(id=build_memory_id).first() if build_memory_id else None
-    )
-    selected_case = (
-        Case.objects.filter(id=build_case_id).first() if build_case_id else None
-    )
-    selected_cpu_cooler = (
-        CpuCooler.objects.filter(id=build_cpu_cooler_id).first()
-        if build_cpu_cooler_id
-        else None
-    )
-    selected_hdd = (
-        InternalHardDrive.objects.filter(id=build_hdd_id).first()
-        if build_hdd_id
-        else None
-    )
+    selected_motherboard = Motherboard.objects.filter(id=build_motherboard_id).first() if build_motherboard_id else None
+    selected_memory = Memory.objects.filter(id=build_memory_id).first() if build_memory_id else None
+    selected_case = Case.objects.filter(id=build_case_id).first() if build_case_id else None
+    selected_cpu_cooler = CpuCooler.objects.filter(id=build_cpu_cooler_id).first() if build_cpu_cooler_id else None
+    selected_hdd = InternalHardDrive.objects.filter(id=build_hdd_id).first() if build_hdd_id else None
     selected_os = Os.objects.filter(id=build_os_id).first() if build_os_id else None
-    selected_video_card = (
-        VideoCard.objects.filter(id=build_video_card_id).first()
-        if build_video_card_id
-        else None
-    )
+    selected_video_card = VideoCard.objects.filter(id=build_video_card_id).first() if build_video_card_id else None
 
     context = {
         "cpu": selected_cpu,
@@ -250,10 +222,6 @@ def export_build(request):
                     "id": obj.id,
                     "name": obj.name,
                 }
-            else:
-                pass
-        else:
-            pass
 
     json_data = json.dumps(build_data, ensure_ascii=False, indent=2)
 
@@ -296,15 +264,14 @@ def import_build(request):
                     exists = model_class.objects.filter(id=item_id).exists()
                     if exists:
                         request.session[session_key_to_set] = item_id
-                    else:
-                        pass
 
         request.session.modified = True
         return redirect("main:show_build")
-
     else:
         return redirect("main:show_build")
 
+
+@login_required
 def ajax_search(request, category):
     compatibility_on = request.session.get("compatibility_on", True)
     query = request.GET.get("q", "").strip().lower()
@@ -330,7 +297,6 @@ def ajax_search(request, category):
         return JsonResponse({"error": "Некорректная категория"}, status=400)
 
     items = model_class.objects.all()
-
     if query:
         items = items.filter(name__icontains=query)
 
@@ -354,3 +320,63 @@ def ajax_search(request, category):
         })
 
     return JsonResponse({"items": results}, safe=False)
+
+
+
+@login_required
+def save_build_to_db(request):
+    from accounts.models import SavedBuild
+
+    build_cpu_id = request.session.get("build_cpu")
+    build_motherboard_id = request.session.get("build_motherboard")
+    build_memory_id = request.session.get("build_memory")
+    build_case_id = request.session.get("build_case")
+    build_cpu_cooler_id = request.session.get("build_cpu_cooler")
+    build_hdd_id = request.session.get("build_hdd")
+    build_os_id = request.session.get("build_os")
+    build_video_card_id = request.session.get("build_video_card")
+
+    cpu_obj = Cpu.objects.filter(id=build_cpu_id).first() if build_cpu_id else None
+    mb_obj = Motherboard.objects.filter(id=build_motherboard_id).first() if build_motherboard_id else None
+    mem_obj = Memory.objects.filter(id=build_memory_id).first() if build_memory_id else None
+    case_obj = Case.objects.filter(id=build_case_id).first() if build_case_id else None
+    cooler_obj = CpuCooler.objects.filter(id=build_cpu_cooler_id).first() if build_cpu_cooler_id else None
+    hdd_obj = InternalHardDrive.objects.filter(id=build_hdd_id).first() if build_hdd_id else None
+    os_obj = Os.objects.filter(id=build_os_id).first() if build_os_id else None
+    vc_obj = VideoCard.objects.filter(id=build_video_card_id).first() if build_video_card_id else None
+
+    build_name = "Моя сборка"
+
+    SavedBuild.objects.create(
+        user=request.user,
+        build_name=build_name,
+        cpu=cpu_obj,
+        motherboard=mb_obj,
+        memory=mem_obj,
+        case=case_obj,
+        cpu_cooler=cooler_obj,
+        hdd=hdd_obj,
+        os=os_obj,
+        video_card=vc_obj
+    )
+    return redirect("main:my_builds")
+
+
+@login_required
+def my_builds(request):
+    from accounts.models import SavedBuild
+
+    builds = SavedBuild.objects.filter(user=request.user).order_by("-created_at")
+    return render(request, "main/my_builds.html", {"builds": builds})
+
+
+@login_required
+def delete_build(request, build_id):
+    from accounts.models import SavedBuild
+
+    build = get_object_or_404(SavedBuild, id=build_id)
+    if build.user != request.user:
+        return HttpResponseBadRequest("Вы не можете удалять чужие сборки.")
+
+    build.delete()
+    return redirect("main:my_builds")

@@ -9,7 +9,10 @@ from .views import (
     remove_from_build,
     export_build,
     import_build,
-    ajax_search
+    ajax_search, 
+    save_build_to_db, 
+    my_builds,
+    delete_build
 )
 
 app_name = "main"
@@ -29,5 +32,8 @@ urlpatterns = [
     path("export_build/", export_build, name="export_build"),
     path("import_build/", import_build, name="import_build"),
     path('ajax_search/<str:category>/', ajax_search, name='ajax_search'),
+    path('save_build_to_db/', save_build_to_db, name='save_build_to_db'),
+    path('my_builds/', my_builds, name='my_builds'),
+    path('delete_build/<int:build_id>/', delete_build, name='delete_build'),
 
 ]

@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Мои сохранённые сборки</title>
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <h1>Мои сохранённые сборки</h1>
+
+    {% if builds %}
+        <ul>
+            {% for b in builds %}
+                <li style="margin-bottom: 15px;">
+                    <strong>
+                        {% if b.build_name %}{{ b.build_name }}{% else %}(Без названия){% endif %}
+                    </strong>
+                    <br>
+                    Дата создания: {{ b.created_at|date:"d.m.Y H:i" }}
+                    <br>
+
+                    <!-- CPU -->
+                    CPU:
+                    {% if b.cpu %}
+                        {{ b.cpu.name }}
+                    {% else %}
+                        —
+                    {% endif %}
+                    <br>
+
+                    <!-- Motherboard -->
+                    Motherboard:
+                    {% if b.motherboard %}
+                        {{ b.motherboard.name }}
+                    {% else %}
+                        —
+                    {% endif %}
+                    <br>
+
+                    <!-- Memory -->
+                    Memory:
+                    {% if b.memory %}
+                        {{ b.memory.name }}
+                    {% else %}
+                        —
+                    {% endif %}
+                    <br>
+
+                    <!-- Case -->
+                    Case:
+                    {% if b.case %}
+                        {{ b.case.name }}
+                    {% else %}
+                        —
+                    {% endif %}
+                    <br>
+
+                    <!-- CPU Cooler -->
+                    CPU Cooler:
+                    {% if b.cpu_cooler %}
+                        {{ b.cpu_cooler.name }}
+                    {% else %}
+                        —
+                    {% endif %}
+                    <br>
+
+                    <!-- HDD -->
+                    HDD:
+                    {% if b.hdd %}
+                        {{ b.hdd.name }}
+                    {% else %}
+                        —
+                    {% endif %}
+                    <br>
+
+                    <!-- OS -->
+                    OS:
+                    {% if b.os %}
+                        {{ b.os.name }}
+                    {% else %}
+                        —
+                    {% endif %}
+                    <br>
+
+                    <!-- Video Card -->
+                    Video Card:
+                    {% if b.video_card %}
+                        {{ b.video_card.name }}
+                    {% else %}
+                        —
+                    {% endif %}
+                    <br>
+
+                    <form method="post" action="{% url 'main:delete_build' b.id %}" style="margin-top: 5px;">
+                        {% csrf_token %}
+                        <button type="submit">Удалить сборку</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>У вас ещё нет сохранённых сборок.</p>
+    {% endif %}
+
+    <p><a href="{% url 'main:show_build' %}">К текущей сборке</a></p>
+</div>
+</body>
+</html>
