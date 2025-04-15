@@ -11,7 +11,7 @@
 <div class="container">
     <h1>Моя сборка</h1>
 
-    <p>CPU:
+    <p>Процессор:
     {% if cpu %}
         <strong>{{ cpu.name }}</strong>
         (<a class="list-action" href="{% url 'main:component_detail' 'cpu' cpu.id %}">подробнее</a>)
@@ -21,7 +21,7 @@
     {% endif %}
     </p>
 
-    <p>Motherboard:
+    <p>Материнская плата:
     {% if motherboard %}
         <strong>{{ motherboard.name }}</strong>
         (<a class="list-action" href="{% url 'main:component_detail' 'motherboard' motherboard.id %}">подробнее</a>)
@@ -31,7 +31,7 @@
     {% endif %}
     </p>
 
-    <p>Memory:
+    <p>Оперативная память:
     {% if memory %}
         <strong>{{ memory.name }}</strong>
         (<a class="list-action" href="{% url 'main:component_detail' 'memory' memory.id %}">подробнее</a>)
@@ -41,7 +41,7 @@
     {% endif %}
     </p>
 
-    <p>Case:
+    <p>Корпус:
     {% if case %}
         <strong>{{ case.name }}</strong>
         (<a class="list-action" href="{% url 'main:component_detail' 'case' case.id %}">подробнее</a>)
@@ -51,7 +51,7 @@
     {% endif %}
     </p>
 
-    <p>CPU Cooler:
+    <p>Кулер для процессора:
     {% if cpu_cooler %}
         <strong>{{ cpu_cooler.name }}</strong>
         (<a class="list-action" href="{% url 'main:component_detail' 'cpu_cooler' cpu_cooler.id %}">подробнее</a>)
@@ -61,7 +61,7 @@
     {% endif %}
     </p>
 
-    <p>HDD:
+    <p>Твердотелый накопитель:
     {% if hdd %}
         <strong>{{ hdd.name }}</strong>
         (<a class="list-action" href="{% url 'main:component_detail' 'hdd' hdd.id %}">подробнее</a>)
@@ -70,7 +70,7 @@
         <a class="list-action" href="{% url 'main:list_components' 'hdd' %}">Выбрать</a>
     {% endif %}
     </p>
-    <p>Video Card:
+    <p>Видеокарта:
         {% if video_card %}
             <strong>{{ video_card.name }}</strong>
             (<a class="list-action" href="{% url 'main:component_detail' 'video_card' video_card.id %}">подробнее</a>)
@@ -80,7 +80,7 @@
         {% endif %}
         </p>
         
-    <p>OS:
+    <p>Операционная система:
     {% if os %}
         <strong>{{ os.name }}</strong>
         (<a class="list-action" href="{% url 'main:component_detail' 'os' os.id %}">подробнее</a>)

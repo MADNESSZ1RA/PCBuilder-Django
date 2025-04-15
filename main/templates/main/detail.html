@@ -18,12 +18,12 @@
         <p><strong>Ядер:</strong> {{ obj.core_count }}</p>
         <p><strong>Частота (Core Clock):</strong> {{ obj.core_clock }}</p>
         <p><strong>Буст (Boost Clock):</strong> {{ obj.boost_clock }}</p>
-        <p><strong>Socket:</strong> {{ obj.socket }}</p>
-        <p><strong>TDP:</strong> {{ obj.tdp }}</p>
-        <p><strong>SMT:</strong> {{ obj.smt }}</p>
-        <p><strong>Graphics:</strong> {{ obj.graphics }}</p>
+        <p><strong>Сокет:</strong> {{ obj.socket }}</p>
+        <p><strong>Тепловыделение:</strong> {{ obj.tdp }}</p>
+        <p><strong>Многопоточность:</strong> {{ obj.smt }}</p>
+        <p><strong>Встроенное графическое ядро:</strong> {{ obj.graphics }}</p>
     {% elif category == 'motherboard' %}
-        <p><strong>Socket:</strong> {{ obj.socket }}</p>
+        <p><strong>Сокет:</strong> {{ obj.socket }}</p>
         <p><strong>Форм-фактор:</strong> {{ obj.form_factor }}</p>
         <p><strong>Макс. память (ГБ):</strong> {{ obj.max_memory }}</p>
         <p><strong>Слотов памяти:</strong> {{ obj.memory_slots }}</p>
@@ -31,36 +31,34 @@
     {% elif category == 'memory' %}
         <p><strong>Скорость:</strong> {{ obj.speed }}</p>
         <p><strong>Модули:</strong> {{ obj.modules }}</p>
-        <p><strong>Цена за ГБ:</strong> {{ obj.price_per_gb }}</p>
         <p><strong>Цвет:</strong> {{ obj.color }}</p>
-        <p><strong>First Word Latency:</strong> {{ obj.first_word_latency }}</p>
-        <p><strong>CAS Latency:</strong> {{ obj.cas_latency }}</p>
+        <p><strong>Частота:</strong> {{ obj.first_word_latency }}</p>
+        <p><strong>Тайминги:</strong> {{ obj.cas_latency }}</p>
     {% elif category == 'case' %}
         <p><strong>Тип:</strong> {{ obj.type }}</p>
         <p><strong>Цвет:</strong> {{ obj.color }}</p>
-        <p><strong>PSU:</strong> {{ obj.psu }}</p>
+        <p><strong>Встроенный блок питания:</strong> {{ obj.psu }}</p>
         <p><strong>Боковая панель:</strong> {{ obj.side_panel }}</p>
         <p><strong>Внешние слоты:</strong> {{ obj.external_volume }}</p>
         <p><strong>Внутренние слоты 3.5:</strong> {{ obj.internal_35_bays }}</p>
     {% elif category == 'cpu_cooler' %}
-        <p><strong>RPM:</strong> {{ obj.rpm }}</p>
+        <p><strong>Обороты в минуту:</strong> {{ obj.rpm }}</p>
         <p><strong>Уровень шума:</strong> {{ obj.noise_level }}</p>
         <p><strong>Цвет:</strong> {{ obj.color }}</p>
         <p><strong>Размер:</strong> {{ obj.size }}</p>
     {% elif category == 'hdd' %}
         <p><strong>Вместимость:</strong> {{ obj.capacity }}</p>
-        <p><strong>Цена за ГБ:</strong> {{ obj.price_per_gb }}</p>
         <p><strong>Тип:</strong> {{ obj.type }}</p>
         <p><strong>Кэш:</strong> {{ obj.cache }}</p>
         <p><strong>Форм-фактор:</strong> {{ obj.form_factor }}</p>
         <p><strong>Интерфейс:</strong> {{ obj.interface }}</p>
     {% elif category == 'video_card' %}
-    <p><strong>Чипсет:</strong> {{ obj.chipset }}</p>
-    <p><strong>Память:</strong> {{ obj.memory }}</p>
-    <p><strong>Количество ядер:</strong> {{ obj.core_clock }}</p>
-    <p><strong>Частота:</strong> {{ obj.boost_clock }}</p>
-    <p><strong>Цвет:</strong> {{ obj.color }}</p>
-    <p><strong>Длина:</strong> {{ obj.length }}</p>
+        <p><strong>Чипсет:</strong> {{ obj.chipset }}</p>
+        <p><strong>Память:</strong> {{ obj.memory }}</p>
+        <p><strong>Количество ядер:</strong> {{ obj.core_clock }}</p>
+        <p><strong>Частота:</strong> {{ obj.boost_clock }}</p>
+        <p><strong>Цвет:</strong> {{ obj.color }}</p>
+        <p><strong>Длина:</strong> {{ obj.length }}</p>
     {% elif category == 'os' %}
         <p><strong>Режим:</strong> {{ obj.mode }}</p>
         <p><strong>Макс. память (ГБ):</strong> {{ obj.max_memory }}</p>
