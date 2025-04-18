@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from main.models import Cpu, Motherboard, Memory, Case, CpuCooler, InternalHardDrive, Os, VideoCard
+from main.models import Cpu, Motherboard, Memory, Case, CpuCooler, InternalHardDrive, Os, VideoCard, PowerSupply
 
 class SavedBuild(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -15,6 +15,7 @@ class SavedBuild(models.Model):
     hdd = models.ForeignKey(InternalHardDrive, on_delete=models.SET_NULL, blank=True, null=True)
     os = models.ForeignKey(Os, on_delete=models.SET_NULL, blank=True, null=True)
     video_card = models.ForeignKey(VideoCard, on_delete=models.SET_NULL, blank=True, null=True)
+    powersupply = models.ForeignKey(PowerSupply, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return f"SavedBuild #{self.id} by {self.user} | {self.build_name or 'No Name'}"

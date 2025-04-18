@@ -92,6 +92,14 @@
                     {% else %}
                         —
                     {% endif %}
+
+                    <!-- PowerSupply -->
+                    PowerSupply:
+                    {% if b.powersupply %}
+                        {{ b.powersupply.name }}
+                    {% else %}
+                        —
+                    {% endif %}
                     <br>
 
                     <form method="post" action="{% url 'main:delete_build' b.id %}" style="margin-top: 5px;">

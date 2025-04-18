@@ -62,6 +62,12 @@
     {% elif category == 'os' %}
         <p><strong>Режим:</strong> {{ obj.mode }}</p>
         <p><strong>Макс. память (ГБ):</strong> {{ obj.max_memory }}</p>
+    {% elif category == 'powersupply' %}
+        <p><strong>Тип:</strong> {{ obj.type }}</p>
+        <p><strong>Сертификат:</strong> {{ obj.efficiency }}</p>
+        <p><strong>Мощность:</strong> {{ obj.wattage }} ватт</p>
+        <p><strong>Модульность:</strong> {{ obj.modular }}</p>
+        <p><strong>Цвет:</strong> {{ obj.color }}</p>
     {% endif %}
 
     {% if user.is_authenticated %}

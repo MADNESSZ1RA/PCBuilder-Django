@@ -90,6 +90,16 @@
     {% endif %}
     </p>
 
+    <p>Блок питания:
+        {% if powersupply %}
+            <strong>{{ powersupply.name }}</strong>
+            (<a class="list-action" href="{% url 'main:component_detail' 'powersupply' powersupply.id %}">подробнее</a>)
+            <a class="list-action" href="{% url 'main:remove_from_build' 'powersupply' %}">Удалить</a>
+        {% else %}
+            <a class="list-action" href="{% url 'main:list_components' 'powersupply' %}">Выбрать</a>
+        {% endif %}
+    </p>
+
     <form method="get" action="{% url 'main:export_build' %}">
         <button type="submit">Экспорт</button>
     </form>

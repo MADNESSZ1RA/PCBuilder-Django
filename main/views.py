@@ -12,6 +12,7 @@ from .models import (
     InternalHardDrive,
     Os,
     VideoCard,
+    PowerSupply,
 )
 from .compatibility import (
     filter_compatible_motherboards,
@@ -51,6 +52,7 @@ def list_components(request, category):
         "hdd": InternalHardDrive,
         "os": Os,
         "video_card": VideoCard,
+        "powersupply": PowerSupply,
     }
     model_class = model_map.get(category)
     if not model_class:
@@ -83,6 +85,7 @@ def add_to_build(request, category, item_id):
         "hdd": "build_hdd",
         "os": "build_os",
         "video_card": "build_video_card",
+        "powersupply": "build_powersupply"
     }
     key = build_map.get(category)
     if not key:
@@ -97,6 +100,7 @@ def add_to_build(request, category, item_id):
         "hdd": InternalHardDrive,
         "os": Os,
         "video_card": VideoCard,
+        "powersupply": PowerSupply,
     }
     model_class = model_map.get(category)
     try:
@@ -119,6 +123,7 @@ def show_build(request):
     build_hdd_id = request.session.get("build_hdd")
     build_os_id = request.session.get("build_os")
     build_video_card_id = request.session.get("build_video_card")
+    build_powersupply_id = request.session.get("build_powersupply")
 
     selected_cpu = Cpu.objects.filter(id=build_cpu_id).first() if build_cpu_id else None
     selected_motherboard = Motherboard.objects.filter(id=build_motherboard_id).first() if build_motherboard_id else None
@@ -128,6 +133,7 @@ def show_build(request):
     selected_hdd = InternalHardDrive.objects.filter(id=build_hdd_id).first() if build_hdd_id else None
     selected_os = Os.objects.filter(id=build_os_id).first() if build_os_id else None
     selected_video_card = VideoCard.objects.filter(id=build_video_card_id).first() if build_video_card_id else None
+    sellected_powersupply = PowerSupply.objects.filter(id=build_powersupply_id).first() if build_powersupply_id else None
 
     context = {
         "cpu": selected_cpu,
@@ -138,6 +144,7 @@ def show_build(request):
         "hdd": selected_hdd,
         "os": selected_os,
         "video_card": selected_video_card,
+        "powersupply": sellected_powersupply,
     }
     return render(request, "main/build.html", context)
 
@@ -152,6 +159,7 @@ def remove_from_build(request, category):
         "hdd": "build_hdd",
         "os": "build_os",
         "video_card": "build_video_card",
+        "powersupply": "build_powersupply",
     }
     key = build_map.get(category)
     if not key:
@@ -173,6 +181,7 @@ def component_detail(request, category, item_id):
         "hdd": InternalHardDrive,
         "os": Os,
         "video_card": VideoCard,
+        "powersupply": PowerSupply,
     }
     model_class = model_map.get(category)
     if not model_class:
@@ -206,6 +215,7 @@ BUILD_MAP = {
     "build_hdd": (InternalHardDrive, "hdd"),
     "build_os": (Os, "os"),
     "build_video_card": (VideoCard, "video_card"),
+    "build_powersupply": (PowerSupply, "powersupply"),
 }
 
 
@@ -291,6 +301,7 @@ def ajax_search(request, category):
         "hdd": InternalHardDrive,
         "os": Os,
         "video_card": VideoCard,
+        "powersupply": PowerSupply,
     }
     model_class = model_map.get(category)
     if not model_class:
@@ -335,6 +346,7 @@ def save_build_to_db(request):
     build_hdd_id = request.session.get("build_hdd")
     build_os_id = request.session.get("build_os")
     build_video_card_id = request.session.get("build_video_card")
+    build_powersupply_id = request.session.get("build_powersupply")
 
     cpu_obj = Cpu.objects.filter(id=build_cpu_id).first() if build_cpu_id else None
     mb_obj = Motherboard.objects.filter(id=build_motherboard_id).first() if build_motherboard_id else None
@@ -344,6 +356,7 @@ def save_build_to_db(request):
     hdd_obj = InternalHardDrive.objects.filter(id=build_hdd_id).first() if build_hdd_id else None
     os_obj = Os.objects.filter(id=build_os_id).first() if build_os_id else None
     vc_obj = VideoCard.objects.filter(id=build_video_card_id).first() if build_video_card_id else None
+    ps_obj = PowerSupply.objects.filter(id=build_powersupply_id).first() if build_powersupply_id else None
 
     build_name = "Моя сборка"
 
@@ -357,7 +370,8 @@ def save_build_to_db(request):
         cpu_cooler=cooler_obj,
         hdd=hdd_obj,
         os=os_obj,
-        video_card=vc_obj
+        video_card=vc_obj,
+        powersupply=ps_obj
     )
     return redirect("main:my_builds")
 

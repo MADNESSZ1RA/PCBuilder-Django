@@ -14,6 +14,22 @@ class VideoCard(models.Model):
         managed = False
         db_table = 'video_card'
 
+class PowerSupply(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.TextField(blank=True, null=True)
+    type = models.TextField(blank=True, null=True)
+    efficiency = models.TextField(blank=True, null=True)
+    wattage = models.IntegerField(blank=True, null=True)
+    modular = models.TextField(blank=True, null=True)
+    color = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "power_supply"
+
+    def __str__(self):
+        return self.name or f"PSU #{self.id}"
+
 class Case(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(blank=True, null=True)
