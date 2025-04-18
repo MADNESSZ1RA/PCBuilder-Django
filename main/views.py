@@ -17,6 +17,7 @@ from .models import (
 from .compatibility import (
     filter_compatible_motherboards,
     filter_compatible_cases_by_motherboard,
+    filter_compatible_psu,
 )
 from accounts.models import SavedBuild
 
@@ -65,6 +66,14 @@ def list_components(request, category):
             items = filter_compatible_motherboards(current_cpu, items)
         elif category == "case" and current_motherboard:
             items = filter_compatible_cases_by_motherboard(current_motherboard, items)
+        elif category == "powersupply":
+            items = filter_compatible_psu(
+                items,
+                cpu=current_cpu,
+                gpu=VideoCard.objects.filter(id=request.session.get("build_video_card")).first(),
+                memory=Memory.objects.filter(id=request.session.get("build_memory")).first(),
+                hdd=InternalHardDrive.objects.filter(id=request.session.get("build_hdd")).first(),
+            )
 
     context = {
         "category": category,
@@ -316,6 +325,14 @@ def ajax_search(request, category):
             items = filter_compatible_motherboards(current_cpu, items)
         elif category == "case" and current_motherboard:
             items = filter_compatible_cases_by_motherboard(current_motherboard, items)
+        elif category == "powersupply":
+            items = filter_compatible_psu(
+                items,
+                cpu=current_cpu,
+                gpu=VideoCard.objects.filter(id=request.session.get("build_video_card")).first(),
+                memory=Memory.objects.filter(id=request.session.get("build_memory")).first(),
+                hdd=InternalHardDrive.objects.filter(id=request.session.get("build_hdd")).first(),
+            )
 
     results = []
     for item in items:

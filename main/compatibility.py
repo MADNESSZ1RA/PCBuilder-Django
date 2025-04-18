@@ -1,5 +1,101 @@
 import re
 
+_WATTAGE_HEADROOM = 1.50
+
+def _parse_ghz(text: str) -> float | None:
+    if not text:
+        return None
+    text = text.lower().replace(',', '.')
+    m = re.search(r'(\d+(?:\.\d+)?)\s*(ghz|mhz)?', text)
+    if not m:
+        return None
+    num = float(m.group(1))
+    if m.group(2) == 'mhz':
+        num /= 1000
+    return num
+
+
+def _parse_gb(text: str) -> int | None:
+    if not text:
+        return None
+    m = re.search(r'(\d+)\s*gb', text.lower())
+    return int(m.group(1)) if m else None
+
+
+def estimate_cpu_power(cpu) -> int:
+    if cpu is None:
+        return 0
+    if cpu.tdp:
+        return cpu.tdp
+    ghz = _parse_ghz(cpu.boost_clock or cpu.core_clock or '')
+    if ghz is None:
+        return 65
+    extra = max(0, ghz - 3.0) * 35
+    return int(65 + extra)
+
+
+def estimate_gpu_power(gpu) -> int:
+    if gpu is None:
+        return 0
+    mem_gb = _parse_gb(gpu.memory or '')
+    if mem_gb is None:
+        return 150
+    if mem_gb <= 4:
+        return 75
+    if mem_gb <= 8:
+        return 150
+    return 250
+
+
+def estimate_memory_power(memory) -> int:
+    if memory is None:
+        return 0
+    m = re.match(r'(\d+)\s*x', (memory.modules or '').lower())
+    modules = int(m.group(1)) if m else 2
+    return modules * 4
+
+
+def estimate_drive_power(hdd) -> int:
+    if hdd is None:
+        return 0
+    t = (hdd.type or '').lower()
+    if 'ssd' in t:
+        return 3
+    return 8
+
+
+def estimate_base_power() -> int:
+    return 50
+
+
+def estimate_build_power(cpu=None, gpu=None, memory=None, hdd=None) -> int:
+    total = (
+        estimate_cpu_power(cpu)
+        + estimate_gpu_power(gpu)
+        + estimate_memory_power(memory)
+        + estimate_drive_power(hdd)
+        + estimate_base_power()
+    )
+    return total
+
+
+def is_powersupply_sufficient(psu, cpu=None, gpu=None, memory=None, hdd=None) -> bool:
+    if psu is None:
+        return False
+    if psu.wattage is None:
+        return False
+
+    required = estimate_build_power(cpu, gpu, memory, hdd)
+    return psu.wattage >= required * _WATTAGE_HEADROOM
+
+
+def filter_compatible_psu(all_psu, cpu=None, gpu=None, memory=None, hdd=None):
+    return [
+        p for p in all_psu
+        if is_powersupply_sufficient(p, cpu, gpu, memory, hdd)
+    ]
+
+
 
 def is_compatible_cpu_motherboard(cpu, motherboard):
     return cpu.socket == motherboard.socket
