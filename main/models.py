@@ -37,7 +37,7 @@ class Case(models.Model):
     color = models.TextField(blank=True, null=True)
     psu = models.TextField(blank=True, null=True)
     side_panel = models.TextField(blank=True, null=True)
-    external_volume = models.TextField(blank=True, null=True)
+    # external_volume = models.TextField(blank=True, null=True)
     internal_35_bays = models.IntegerField(blank=True, null=True)
 
     class Meta:

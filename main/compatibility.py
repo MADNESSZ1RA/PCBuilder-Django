@@ -2,7 +2,7 @@ import re
 
 _WATTAGE_HEADROOM = 1.50
 
-def _parse_ghz(text: str) -> float | None:
+def _parse_ghz(text: str):
     if not text:
         return None
     text = text.lower().replace(',', '.')
@@ -15,14 +15,14 @@ def _parse_ghz(text: str) -> float | None:
     return num
 
 
-def _parse_gb(text: str) -> int | None:
+def _parse_gb(text: str):
     if not text:
         return None
     m = re.search(r'(\d+)\s*gb', text.lower())
     return int(m.group(1)) if m else None
 
 
-def estimate_cpu_power(cpu) -> int:
+def estimate_cpu_power(cpu):
     if cpu is None:
         return 0
     if cpu.tdp:
@@ -34,7 +34,7 @@ def estimate_cpu_power(cpu) -> int:
     return int(65 + extra)
 
 
-def estimate_gpu_power(gpu) -> int:
+def estimate_gpu_power(gpu):
     if gpu is None:
         return 0
     mem_gb = _parse_gb(gpu.memory or '')
@@ -47,7 +47,7 @@ def estimate_gpu_power(gpu) -> int:
     return 250
 
 
-def estimate_memory_power(memory) -> int:
+def estimate_memory_power(memory):
     if memory is None:
         return 0
     m = re.match(r'(\d+)\s*x', (memory.modules or '').lower())
@@ -55,7 +55,7 @@ def estimate_memory_power(memory) -> int:
     return modules * 4
 
 
-def estimate_drive_power(hdd) -> int:
+def estimate_drive_power(hdd):
     if hdd is None:
         return 0
     t = (hdd.type or '').lower()
@@ -64,11 +64,11 @@ def estimate_drive_power(hdd) -> int:
     return 8
 
 
-def estimate_base_power() -> int:
+def estimate_base_power():
     return 50
 
 
-def estimate_build_power(cpu=None, gpu=None, memory=None, hdd=None) -> int:
+def estimate_build_power(cpu=None, gpu=None, memory=None, hdd=None):
     total = (
         estimate_cpu_power(cpu)
         + estimate_gpu_power(gpu)
@@ -79,7 +79,7 @@ def estimate_build_power(cpu=None, gpu=None, memory=None, hdd=None) -> int:
     return total
 
 
-def is_powersupply_sufficient(psu, cpu=None, gpu=None, memory=None, hdd=None) -> bool:
+def is_powersupply_sufficient(psu, cpu=None, gpu=None, memory=None, hdd=None):
     if psu is None:
         return False
     if psu.wattage is None:
