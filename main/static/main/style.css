@@ -1,48 +1,49 @@
-/* main/static/main/style.css */
+/* main/static/main/style.css  ─── LIGHT THEME ──────────────────── */
 
 html,
 body {
   margin: 0;
   padding: 0;
-  background-color: #1c1c1c; /* Тёмный фон */
-  color: #ffffff; /* Белый текст */
+  background-color: #f7f7f7;          /* светлый фон страницы */
+  color: #222222;                     /* тёмный текст */
   font-family: Arial, sans-serif;
 }
 
 a {
-  color: #70a4ff; /* Ссылки - светло-синий цвет */
+  color: #0066cc;                     /* ссылки — насыщенный синий */
   text-decoration: none;
 }
 
 a:hover {
   text-decoration: underline;
 }
-/* Пример стилей для фиксированной кнопки "На главную" */
+
+/* Фиксированная кнопка «На главную» */
 .fixed-button {
   position: fixed;
   top: 10px;
-  left: 10px; /* или right: 10px, если хотите в углу справа */
-  z-index: 999; /* чтобы было поверх других элементов */
-  background-color: #70a4ff;
+  left: 10px;
+  z-index: 999;
+  background-color: #0066cc;
   padding: 8px 12px;
-  text-decoration: none;
   color: #ffffff;
   border-radius: 4px;
   font-weight: bold;
 }
 
 .fixed-button:hover {
-  background-color: #4e82db;
+  background-color: #004d99;
 }
 
-/* Контейнер всего содержимого */
+/* Контейнер основного контента */
 .container {
   width: 90%;
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #2b2b2b; /* Чуть светлее фон для контента */
+  max-width: 860px;
+  margin: 24px auto;
+  padding: 24px;
+  background-color: #ffffff;          /* карточка на белом фоне */
   border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Заголовки */
@@ -50,7 +51,7 @@ h1,
 h2,
 h3 {
   margin-top: 0;
-  color: #ffdf75; /* например, золотистый */
+  color: #ff9800;                     /* мягкий оранжевый акцент */
 }
 
 /* Списки */
@@ -60,49 +61,49 @@ ul {
 }
 
 li {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 /* Кнопки и формы */
 button,
 input[type="file"],
 input[type="submit"] {
-  background-color: #70a4ff;
+  background-color: #0066cc;
   border: none;
   color: #ffffff;
-  padding: 8px 12px;
-  margin: 5px 0;
+  padding: 8px 14px;
+  margin: 6px 0;
   border-radius: 4px;
   cursor: pointer;
 }
 
 button:hover,
 input[type="submit"]:hover {
-  background-color: #4e82db;
+  background-color: #004d99;
 }
 
 input[type="text"],
 input[type="password"],
 select {
   width: 100%;
-  padding: 6px;
-  margin: 5px 0 10px 0;
-  border: 1px solid #444;
+  padding: 8px;
+  margin: 6px 0 12px 0;
+  border: 1px solid #cccccc;
   border-radius: 4px;
-  background-color: #333;
-  color: #fff;
+  background-color: #ffffff;
+  color: #222222;
 }
 
-/* Ссылки-кнопки в списках */
+/* «Кнопки»-ссылки в списках */
 .list-action {
   margin-left: 10px;
   font-size: 0.9em;
-  background-color: #70a4ff;
+  background-color: #0066cc;
   color: #ffffff;
-  padding: 3px 6px;
+  padding: 4px 8px;
   border-radius: 3px;
 }
 
 .list-action:hover {
-  background-color: #4e82db;
+  background-color: #004d99;
 }
