@@ -10,12 +10,13 @@
 <body>
 
 <div class="container">
-    <h1>{{ category|title }}</h1>
-    {% if compatibility_on %}
-        <p>Совместимость: включена</p>
-    {% else %}
-        <p>Совместимость: выключена</p>
-    {% endif %}
+  {% load static rus_names %}
+  <h1>{{ category|rus_category }}</h1>
+  {% if compatibility_on %}
+      <p>Совместимость: включена</p>
+  {% else %}
+      <p>Совместимость: выключена</p>
+  {% endif %}
 
     <a href="{% url 'main:index' %}" class="fixed-button">На главную</a>
 
